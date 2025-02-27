@@ -1,36 +1,14 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Image } from "react-native";
+import {View, StyleSheet, Image, TouchableOpacity} from "react-native";
 import { TextInput, Button, Text, Snackbar } from "react-native-paper";
+import {PropsStackNavigation} from "../../interfaces/StackNav";
 
-export function RegistroScreen() {
+export function RegistroScreen({navigation, route}: PropsStackNavigation) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [visible, setVisible] = useState(false);
-
-    const validateEmail = ({email}: { email: any }) => {
-        return /\S+@\S+\.\S+/.test(email);
-    };
-
-    const handleRegister = () => {
-        if (!validateEmail({email: email})) {
-            setErrorMessage("Correo electrónico inválido");
-            setVisible(true);
-            return;
-        }
-        if (password.length < 6) {
-            setErrorMessage("La contraseña debe tener al menos 6 caracteres");
-            setVisible(true);
-            return;
-        }
-        if (password !== confirmPassword) {
-            setErrorMessage("Las contraseñas no coinciden");
-            setVisible(true);
-            return;
-        }
-        console.log("Registro exitoso:", email);
-    };
 
     return (
         <View style={styles.container}>
@@ -61,16 +39,14 @@ export function RegistroScreen() {
 
             <Button
                 mode="contained"
-                onPress={handleRegister}
                 style={styles.button}
-                disabled={!email || !password || !confirmPassword}
-            >
+                disabled={!email || !password || !confirmPassword}>
+                <TouchableOpacity onPress={() => {navigation.navigate("LoginScreen")}}>
                 Registrarse
-            </Button>
 
-            <Snackbar visible={visible} onDismiss={() => setVisible(false)} duration={3000}>
-                {errorMessage}
-            </Snackbar>
+                </TouchableOpacity>
+
+            </Button>
         </View>
     );
 }

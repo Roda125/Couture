@@ -45,7 +45,9 @@ function LoginScreen({navigation, route}: PropsStackNavigation) {
             />
 
             <Button mode="contained" onPress={handleRegister} style={styles.button}>
+                <TouchableOpacity onPress={() => {navigation.navigate("InicioScreen")}}>
                 Iniciar Sesion
+                </TouchableOpacity>
             </Button>
 
             <TouchableOpacity onPress={() => {navigation.navigate("RegistroScreen")}}>
