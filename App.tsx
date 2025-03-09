@@ -25,6 +25,8 @@ export type RootStackParamsList = {
 
 const Stack = createNativeStackNavigator<RootStackParamsList>();
 
+
+
 export default function App() {
     return (
         <NavigationContainer>

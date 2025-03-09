@@ -67,9 +67,6 @@ export const MujerScreen = ({ navigation }: PropsStackNavigation) => {
                 />
             )}
 
-            <TouchableOpacity style={styles.cartButton} onPress={() => navigation.navigate("CarritoScreen")}>
-                <Image source={require("../../../../assets/shopping_cart.png")} style={styles.cartIcon} />
-            </TouchableOpacity>
         </View>
     );
 };

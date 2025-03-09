@@ -5,6 +5,7 @@ import { RouteProp } from "@react-navigation/native";
 
 type RootStackParamList = {
     DetallePrendaScreen: { item: Prenda };
+    CarritoScreen: { carrito: CarritoItem[] };
 };
 
 type Prenda = {
@@ -16,15 +17,16 @@ type Prenda = {
     categoria: string;
 };
 
-type DetallePrendaScreenNavigationProp = StackNavigationProp<
-    RootStackParamList,
-    "DetallePrendaScreen"
->;
+type CarritoItem = {
+    id: number;
+    name: string;
+    image: string;
+    precio: number;
+    talla: string;
+};
 
-type DetallePrendaScreenRouteProp = RouteProp<
-    RootStackParamList,
-    "DetallePrendaScreen"
->;
+type DetallePrendaScreenNavigationProp = StackNavigationProp<RootStackParamList, "DetallePrendaScreen">;
+type DetallePrendaScreenRouteProp = RouteProp<RootStackParamList, "DetallePrendaScreen">;
 
 type Props = {
     navigation: DetallePrendaScreenNavigationProp;
@@ -36,6 +38,28 @@ const tallasDisponibles = ["S", "M", "L", "XL"];
 const DetallePrendaScreen: React.FC<Props> = ({ route, navigation }) => {
     const { item } = route.params;
     const [tallaSeleccionada, setTallaSeleccionada] = useState<string | null>(null);
+    const [carrito, setCarrito] = useState<CarritoItem[]>([]);
+
+    const agregarAlCarrito = () => {
+        if (!tallaSeleccionada) {
+            alert("Por favor, selecciona una talla.");
+            return;
+        }
+
+        const nuevoProducto: CarritoItem = {
+            id: item.id,
+            name: item.name,
+            image: item.image,
+            precio: item.precio,
+            talla: tallaSeleccionada,
+        };
+
+        // Agregamos el producto al carrito
+        setCarrito([...carrito, nuevoProducto]);
+
+        // Navegar a la pantalla del carrito con los productos
+        navigation.navigate("CarritoScreen", { carrito: [...carrito, nuevoProducto] });
+    };
 
     return (
         <View style={styles.container}>
@@ -61,10 +85,7 @@ const DetallePrendaScreen: React.FC<Props> = ({ route, navigation }) => {
                 {tallasDisponibles.map((talla) => (
                     <TouchableOpacity
                         key={talla}
-                        style={[
-                            styles.tallaButton,
-                            talla === tallaSeleccionada ? styles.tallaSeleccionada : null,
-                        ]}
+                        style={[styles.tallaButton, talla === tallaSeleccionada ? styles.tallaSeleccionada : null]}
                         onPress={() => setTallaSeleccionada(talla)}
                     >
                         <Text style={styles.tallaText}>{talla}</Text>
@@ -73,7 +94,7 @@ const DetallePrendaScreen: React.FC<Props> = ({ route, navigation }) => {
             </View>
 
             {/* Botón para añadir al carrito */}
-            <TouchableOpacity style={styles.addToCartButton}>
+            <TouchableOpacity style={styles.addToCartButton} onPress={agregarAlCarrito}>
                 <Text style={styles.addToCartText}>
                     {tallaSeleccionada ? `Añadir Talla ${tallaSeleccionada} al carrito` : "Selecciona una talla"}
                 </Text>
