@@ -27,7 +27,6 @@ type Props = {
 const CarritoScreen: React.FC<Props> = ({ route, navigation }) => {
     const { carrito } = route.params;
 
-    // Calculamos el total del carrito
     const total = carrito.reduce((sum, item) => sum + item.precio, 0);
 
     return (

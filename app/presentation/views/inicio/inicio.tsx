@@ -60,12 +60,12 @@ const styles = StyleSheet.create({
         top: 10,
         right: 10,
         padding: 10,
-        zIndex: 10, // Asegura que el botón esté por encima de otros elementos
+        zIndex: 10,
     },
     userIcon: {
         width: 30,
         height: 30,
-        tintColor: "black", // Ajusta el color según el diseño
+        tintColor: "black",
     },
     title: {
         fontSize: 24,

@@ -20,8 +20,7 @@ export const MujerScreen = ({ navigation }: PropsStackNavigation) => {
 
     const filteredProducts = data
         .filter(item => item.categoria?.toLowerCase() === "mujer") // Filtra por categoría "Mujer"
-        .filter(item =>
-            item.name.toLowerCase().includes(search.toLowerCase()) ||
+        .filter(item => item.name.toLowerCase().includes(search.toLowerCase()) ||
             item.description.toLowerCase().includes(search.toLowerCase())
         );
 

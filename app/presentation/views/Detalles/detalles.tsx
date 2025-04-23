@@ -54,32 +54,29 @@ const DetallePrendaScreen: React.FC<Props> = ({ route, navigation }) => {
             talla: tallaSeleccionada,
         };
 
-        // Agregamos el producto al carrito
         setCarrito([...carrito, nuevoProducto]);
 
-        // Navegar a la pantalla del carrito con los productos
         navigation.navigate("CarritoScreen", { carrito: [...carrito, nuevoProducto] });
     };
 
     return (
         <View style={styles.container}>
-            {/* Botón para volver atrás */}
+
             <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                 <Text style={styles.backButtonText}>← Volver</Text>
             </TouchableOpacity>
 
-            {/* Botón para volver al inicio */}
             <TouchableOpacity onPress={() => navigation.navigate("InicioScreen")} style={styles.homeButton}>
                 <Text style={styles.homeButtonText}>🏠 Inicio</Text>
             </TouchableOpacity>
 
-            {/* Imagen y detalles de la prenda */}
+
             <Image source={{ uri: item.image }} style={styles.image} />
             <Text style={styles.name}>{item.name}</Text>
             <Text style={styles.description}>{item.description}</Text>
             <Text style={styles.price}>{item.precio}€</Text>
 
-            {/* Selector de Talla */}
+
             <Text style={styles.tallaTitle}>Selecciona tu talla:</Text>
             <View style={styles.tallaContainer}>
                 {tallasDisponibles.map((talla) => (
@@ -93,7 +90,6 @@ const DetallePrendaScreen: React.FC<Props> = ({ route, navigation }) => {
                 ))}
             </View>
 
-            {/* Botón para añadir al carrito */}
             <TouchableOpacity style={styles.addToCartButton} onPress={agregarAlCarrito}>
                 <Text style={styles.addToCartText}>
                     {tallaSeleccionada ? `Añadir Talla ${tallaSeleccionada} al carrito` : "Selecciona una talla"}

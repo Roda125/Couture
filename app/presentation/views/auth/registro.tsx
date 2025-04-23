@@ -1,19 +1,65 @@
 import React, { useState } from "react";
-import {View, StyleSheet, Image, TouchableOpacity} from "react-native";
-import { TextInput, Button, Text, Snackbar } from "react-native-paper";
-import {PropsStackNavigation} from "../../interfaces/StackNav";
+import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { TextInput, Button, Text } from "react-native-paper";
+import { PropsStackNavigation } from "../../interfaces/StackNav";
 
-export function RegistroScreen({navigation, route}: PropsStackNavigation) {
+function RegisterScreen({ navigation }: PropsStackNavigation) {
     const [email, setEmail] = useState("");
+    const [name, setName] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
-    const [visible, setVisible] = useState(false);
+
+    const handleRegister = async () => {
+        if (!email || !name || !password || !confirmPassword) {
+            Alert.alert("Campos vacíos", "Por favor completa todos los campos.");
+            return;
+        }
+
+        const emailRegex = /\S+@\S+\.\S+/;
+        if (!emailRegex.test(email)) {
+            Alert.alert("Email inválido", "Introduce un correo electrónico válido.");
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            Alert.alert("Error", "Las contraseñas no coinciden.");
+            return;
+        }
+
+        const userData = {
+            email,
+            name,
+            password,
+        };
+
+        try {
+            const response = await fetch("http://localhost:8080/api/usuarios", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(userData),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Error en el registro");
+            }
+
+            const data = await response.json();
+            console.log("Usuario registrado:", data);
+            Alert.alert("Registro exitoso", "Ahora puedes iniciar sesión.");
+            navigation.navigate("LoginScreen");
+
+        } catch (error) {
+            console.error("Error al registrar usuario:", error);
+            Alert.alert("Error", "No se pudo registrar el usuario. Verifica los datos o el servidor.");
+        }
+    };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>REGISTRO</Text>
-            <Image source={require("../../../../assets/user-icon.svg")} style={styles.image} />
+        <View style={styles.contenedor}>
+            <Text style={styles.titulo}>REGISTRO</Text>
 
             <TextInput
                 label="Correo Electrónico"
@@ -37,36 +83,33 @@ export function RegistroScreen({navigation, route}: PropsStackNavigation) {
                 style={styles.input}
             />
 
-            <Button
-                mode="contained"
-                style={styles.button}
-                disabled={!email || !password || !confirmPassword}>
-                <TouchableOpacity onPress={() => {navigation.navigate("LoginScreen")}}>
-                Registrarse
-
-                </TouchableOpacity>
-
+            <Button mode="contained" onPress={handleRegister} style={styles.button}>
+                Registrarme
             </Button>
+
+            <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>
+                <Text style={styles.registro}>¿Ya tienes cuenta? Inicia sesión</Text>
+            </TouchableOpacity>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
+    registro: {
+        textAlign: "center",
+        color: "black",
+        marginTop: 30,
+    },
+    contenedor: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "#B0B0B0",
         padding: 20,
     },
-    title: {
+    titulo: {
         fontSize: 24,
         fontWeight: "bold",
-        marginBottom: 20,
-    },
-    image: {
-        width: 80,
-        height: 80,
         marginBottom: 20,
     },
     input: {
@@ -79,4 +122,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default RegistroScreen;
+export default RegisterScreen;
