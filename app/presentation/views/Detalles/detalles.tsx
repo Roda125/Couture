@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
+import { useCarrito } from "../Carrito/CarritoContext";
 
 type RootStackParamList = {
     DetallePrendaScreen: { item: Prenda };
-    CarritoScreen: { carrito: CarritoItem[] };
+    CarritoScreen: undefined;
 };
 
 type Prenda = {
@@ -38,9 +39,10 @@ const tallasDisponibles = ["S", "M", "L", "XL"];
 const DetallePrendaScreen: React.FC<Props> = ({ route, navigation }) => {
     const { item } = route.params;
     const [tallaSeleccionada, setTallaSeleccionada] = useState<string | null>(null);
-    const [carrito, setCarrito] = useState<CarritoItem[]>([]);
 
-    const agregarAlCarrito = () => {
+    const { agregarAlCarrito } = useCarrito(); // 👈 accedemos al contexto global
+
+    const handleAgregarAlCarrito = () => {
         if (!tallaSeleccionada) {
             alert("Por favor, selecciona una talla.");
             return;
@@ -54,14 +56,12 @@ const DetallePrendaScreen: React.FC<Props> = ({ route, navigation }) => {
             talla: tallaSeleccionada,
         };
 
-        setCarrito([...carrito, nuevoProducto]);
-
-        navigation.navigate("CarritoScreen", { carrito: [...carrito, nuevoProducto] });
+        agregarAlCarrito(nuevoProducto); // ✅ Añadimos al contexto global
+        navigation.navigate("CarritoScreen"); // ✅ Navegamos sin pasar el array
     };
 
     return (
         <View style={styles.container}>
-
             <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                 <Text style={styles.backButtonText}>← Volver</Text>
             </TouchableOpacity>
@@ -70,12 +70,10 @@ const DetallePrendaScreen: React.FC<Props> = ({ route, navigation }) => {
                 <Text style={styles.homeButtonText}>🏠 Inicio</Text>
             </TouchableOpacity>
 
-
             <Image source={{ uri: item.image }} style={styles.image} />
             <Text style={styles.name}>{item.name}</Text>
             <Text style={styles.description}>{item.description}</Text>
             <Text style={styles.price}>{item.precio}€</Text>
-
 
             <Text style={styles.tallaTitle}>Selecciona tu talla:</Text>
             <View style={styles.tallaContainer}>
@@ -85,12 +83,14 @@ const DetallePrendaScreen: React.FC<Props> = ({ route, navigation }) => {
                         style={[styles.tallaButton, talla === tallaSeleccionada ? styles.tallaSeleccionada : null]}
                         onPress={() => setTallaSeleccionada(talla)}
                     >
-                        <Text style={styles.tallaText}>{talla}</Text>
+                        <Text style={[styles.tallaText, talla === tallaSeleccionada && { color: "white" }]}>
+                            {talla}
+                        </Text>
                     </TouchableOpacity>
                 ))}
             </View>
 
-            <TouchableOpacity style={styles.addToCartButton} onPress={agregarAlCarrito}>
+            <TouchableOpacity style={styles.addToCartButton} onPress={handleAgregarAlCarrito}>
                 <Text style={styles.addToCartText}>
                     {tallaSeleccionada ? `Añadir Talla ${tallaSeleccionada} al carrito` : "Selecciona una talla"}
                 </Text>

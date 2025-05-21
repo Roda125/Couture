@@ -1,33 +1,20 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList } from "react-native";
+import { useCarrito } from "./CarritoContext";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RouteProp } from "@react-navigation/native";
 
 type RootStackParamList = {
-    CarritoScreen: { carrito: CarritoItem[] };
     InicioScreen: undefined;
 };
 
-type CarritoItem = {
-    id: number;
-    name: string;
-    image: string;
-    precio: number;
-    talla: string;
-};
-
-type CarritoScreenNavigationProp = StackNavigationProp<RootStackParamList, "CarritoScreen">;
-type CarritoScreenRouteProp = RouteProp<RootStackParamList, "CarritoScreen">;
-
 type Props = {
-    navigation: CarritoScreenNavigationProp;
-    route: CarritoScreenRouteProp;
+    navigation: StackNavigationProp<RootStackParamList, "InicioScreen">;
 };
 
-const CarritoScreen: React.FC<Props> = ({ route, navigation }) => {
-    const { carrito } = route.params;
+const CarritoScreen: React.FC<Props> = ({ navigation }) => {
+    const { carrito } = useCarrito();
 
-    const total = carrito.reduce((sum, item) => sum + item.precio, 0);
+    const total = carrito.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
 
     return (
         <View style={styles.container}>
@@ -38,14 +25,18 @@ const CarritoScreen: React.FC<Props> = ({ route, navigation }) => {
             ) : (
                 <FlatList
                     data={carrito}
-                    keyExtractor={(item, index) => `${item.id}-${index}`}
+                    keyExtractor={(item, index) => `${item.id}-${item.talla}-${index}`}
                     renderItem={({ item }) => (
                         <View style={styles.itemContainer}>
                             <Image source={{ uri: item.image }} style={styles.image} />
                             <View style={styles.details}>
                                 <Text style={styles.name}>{item.name}</Text>
                                 <Text style={styles.talla}>Talla: {item.talla}</Text>
-                                <Text style={styles.price}>{item.precio}€</Text>
+                                <Text style={styles.price}>Precio: {item.precio}€</Text>
+                                <Text style={styles.cantidad}>Cantidad: {item.cantidad}</Text>
+                                <Text style={styles.subtotal}>
+                                    Subtotal: {(item.precio * item.cantidad).toFixed(2)}€
+                                </Text>
                             </View>
                         </View>
                     )}
@@ -54,12 +45,17 @@ const CarritoScreen: React.FC<Props> = ({ route, navigation }) => {
 
             <Text style={styles.total}>Total: {total.toFixed(2)}€</Text>
 
-
             <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button} onPress={() => alert("Función de pago en desarrollo")}>
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => alert("Función de pago en desarrollo")}
+                >
                     <Text style={styles.buttonText}>Pagar</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("InicioScreen")}>
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => navigation.navigate("InicioScreen")}
+                >
                     <Text style={styles.buttonText}>Seguir Comprando</Text>
                 </TouchableOpacity>
             </View>
@@ -112,6 +108,17 @@ const styles = StyleSheet.create({
     price: {
         fontSize: 16,
         fontWeight: "bold",
+        marginTop: 5,
+    },
+    cantidad: {
+        fontSize: 14,
+        color: "#333",
+        marginTop: 5,
+    },
+    subtotal: {
+        fontSize: 14,
+        fontWeight: "600",
+        color: "#000",
         marginTop: 5,
     },
     total: {
