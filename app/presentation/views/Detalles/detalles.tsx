@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import {
+    View,
+    Text,
+    Image,
+    TouchableOpacity,
+    StyleSheet,
+} from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
 import { useCarrito } from "../Carrito/CarritoContext";
@@ -24,10 +30,17 @@ type CarritoItem = {
     image: string;
     precio: number;
     talla: string;
+    cantidad: number;
 };
 
-type DetallePrendaScreenNavigationProp = StackNavigationProp<RootStackParamList, "DetallePrendaScreen">;
-type DetallePrendaScreenRouteProp = RouteProp<RootStackParamList, "DetallePrendaScreen">;
+type DetallePrendaScreenNavigationProp = StackNavigationProp<
+    RootStackParamList,
+    "DetallePrendaScreen"
+>;
+type DetallePrendaScreenRouteProp = RouteProp<
+    RootStackParamList,
+    "DetallePrendaScreen"
+>;
 
 type Props = {
     navigation: DetallePrendaScreenNavigationProp;
@@ -39,8 +52,9 @@ const tallasDisponibles = ["S", "M", "L", "XL"];
 const DetallePrendaScreen: React.FC<Props> = ({ route, navigation }) => {
     const { item } = route.params;
     const [tallaSeleccionada, setTallaSeleccionada] = useState<string | null>(null);
+    const [cantidad, setCantidad] = useState<number>(1);
 
-    const { agregarAlCarrito } = useCarrito(); // 👈 accedemos al contexto global
+    const { agregarAlCarrito } = useCarrito();
 
     const handleAgregarAlCarrito = () => {
         if (!tallaSeleccionada) {
@@ -54,10 +68,11 @@ const DetallePrendaScreen: React.FC<Props> = ({ route, navigation }) => {
             image: item.image,
             precio: item.precio,
             talla: tallaSeleccionada,
+            cantidad: cantidad,
         };
 
-        agregarAlCarrito(nuevoProducto); // ✅ Añadimos al contexto global
-        navigation.navigate("CarritoScreen"); // ✅ Navegamos sin pasar el array
+        agregarAlCarrito(nuevoProducto);
+        navigation.navigate("CarritoScreen");
     };
 
     return (
@@ -80,19 +95,46 @@ const DetallePrendaScreen: React.FC<Props> = ({ route, navigation }) => {
                 {tallasDisponibles.map((talla) => (
                     <TouchableOpacity
                         key={talla}
-                        style={[styles.tallaButton, talla === tallaSeleccionada ? styles.tallaSeleccionada : null]}
+                        style={[
+                            styles.tallaButton,
+                            talla === tallaSeleccionada && styles.tallaSeleccionada,
+                        ]}
                         onPress={() => setTallaSeleccionada(talla)}
                     >
-                        <Text style={[styles.tallaText, talla === tallaSeleccionada && { color: "white" }]}>
+                        <Text
+                            style={[
+                                styles.tallaText,
+                                talla === tallaSeleccionada && { color: "white" },
+                            ]}
+                        >
                             {talla}
                         </Text>
                     </TouchableOpacity>
                 ))}
             </View>
 
+            <Text style={styles.tallaTitle}>Cantidad:</Text>
+            <View style={styles.cantidadContainer}>
+                <TouchableOpacity
+                    style={styles.cantidadButton}
+                    onPress={() => setCantidad(Math.max(1, cantidad - 1))}
+                >
+                    <Text style={styles.cantidadText}>−</Text>
+                </TouchableOpacity>
+                <Text style={styles.cantidadValue}>{cantidad}</Text>
+                <TouchableOpacity
+                    style={styles.cantidadButton}
+                    onPress={() => setCantidad(cantidad + 1)}
+                >
+                    <Text style={styles.cantidadText}>+</Text>
+                </TouchableOpacity>
+            </View>
+
             <TouchableOpacity style={styles.addToCartButton} onPress={handleAgregarAlCarrito}>
                 <Text style={styles.addToCartText}>
-                    {tallaSeleccionada ? `Añadir Talla ${tallaSeleccionada} al carrito` : "Selecciona una talla"}
+                    {tallaSeleccionada
+                        ? `Añadir ${cantidad} a carrito (Talla ${tallaSeleccionada})`
+                        : "Selecciona una talla"}
                 </Text>
             </TouchableOpacity>
         </View>
@@ -170,8 +212,28 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: "#007bff",
     },
+    cantidadContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginTop: 10,
+        marginBottom: 20,
+    },
+    cantidadButton: {
+        backgroundColor: "#007bff",
+        paddingHorizontal: 15,
+        paddingVertical: 5,
+        borderRadius: 5,
+        marginHorizontal: 10,
+    },
+    cantidadText: {
+        fontSize: 18,
+        color: "white",
+    },
+    cantidadValue: {
+        fontSize: 18,
+        fontWeight: "bold",
+    },
     addToCartButton: {
-        marginTop: 20,
         backgroundColor: "#007bff",
         paddingVertical: 10,
         paddingHorizontal: 20,

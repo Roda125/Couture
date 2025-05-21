@@ -13,6 +13,7 @@ export type CarritoItem = {
 type CarritoContextType = {
     carrito: CarritoItem[];
     agregarAlCarrito: (item: CarritoItem) => void;
+    eliminarDelCarrito: (id: number, talla: string) => void;
     limpiarCarrito: () => void;
 };
 
@@ -50,10 +51,14 @@ export const CarritoProvider: React.FC<{ children: React.ReactNode }> = ({ child
         });
     };
 
+    const eliminarDelCarrito = (id: number, talla: string) => {
+        setCarrito((prev) => prev.filter((item) => item.id !== id || item.talla !== talla));
+    };
+
     const limpiarCarrito = () => setCarrito([]);
 
     return (
-        <CarritoContext.Provider value={{ carrito, agregarAlCarrito, limpiarCarrito }}>
+        <CarritoContext.Provider value={{ carrito, agregarAlCarrito, eliminarDelCarrito, limpiarCarrito }}>
             {children}
         </CarritoContext.Provider>
     );

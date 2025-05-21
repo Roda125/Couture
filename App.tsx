@@ -11,9 +11,10 @@ import { MujerScreen } from "./app/presentation/views/Mujeres/mujeres";
 import NinosScreen from "./app/presentation/views/Niños/niños";
 import CarritoScreen from "./app/presentation/views/Carrito/carrito";
 import DetallePrendaScreen from "./app/presentation/views/Detalles/detalles";
-
-
+import FakePaymentScreen from "./app/presentation/views/Pago/PagoScreen";
 import { CarritoProvider } from "./app/presentation/views/Carrito/CarritoContext";
+import PagoScreen from "./app/presentation/views/Pago/PagoScreen";
+
 
 export type RootStackParamsList = {
     LoginScreen: undefined;
@@ -25,6 +26,7 @@ export type RootStackParamsList = {
     MujerScreen: undefined;
     CarritoScreen: undefined;
     DetallePrendaScreen: { producto: any };
+    FakePaymentScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamsList>();
@@ -47,6 +49,7 @@ export default function App() {
                     <Stack.Screen name="AccesoriosScreen" component={AccesoriosScreen} />
                     <Stack.Screen name="CarritoScreen" component={CarritoScreen} />
                     <Stack.Screen name="DetallePrendaScreen" component={DetallePrendaScreen} />
+                    <Stack.Screen name="PagoScreen" component={PagoScreen} />
                 </Stack.Navigator>
             </NavigationContainer>
         </CarritoProvider>

@@ -1,10 +1,18 @@
 import React from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList } from "react-native";
+import {
+    View,
+    Text,
+    Image,
+    TouchableOpacity,
+    StyleSheet,
+    FlatList,
+} from "react-native";
 import { useCarrito } from "./CarritoContext";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 type RootStackParamList = {
     InicioScreen: undefined;
+    PagoScreen: undefined;
 };
 
 type Props = {
@@ -12,9 +20,21 @@ type Props = {
 };
 
 const CarritoScreen: React.FC<Props> = ({ navigation }) => {
-    const { carrito } = useCarrito();
+    const { carrito, eliminarDelCarrito } = useCarrito();
 
-    const total = carrito.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+    const parseNumber = (value: any): number => {
+        if (typeof value === "string") {
+            value = value.replace(",", ".").replace(/[^\d.]/g, "");
+        }
+        const parsed = parseFloat(value);
+        return isNaN(parsed) ? 0 : parsed;
+    };
+
+    const total = carrito.reduce((sum, item) => {
+        const precio = parseNumber(item.precio);
+        const cantidad = parseNumber(item.cantidad);
+        return sum + precio * cantidad;
+    }, 0);
 
     return (
         <View style={styles.container}>
@@ -26,20 +46,27 @@ const CarritoScreen: React.FC<Props> = ({ navigation }) => {
                 <FlatList
                     data={carrito}
                     keyExtractor={(item, index) => `${item.id}-${item.talla}-${index}`}
-                    renderItem={({ item }) => (
-                        <View style={styles.itemContainer}>
-                            <Image source={{ uri: item.image }} style={styles.image} />
-                            <View style={styles.details}>
-                                <Text style={styles.name}>{item.name}</Text>
-                                <Text style={styles.talla}>Talla: {item.talla}</Text>
-                                <Text style={styles.price}>Precio: {item.precio}€</Text>
-                                <Text style={styles.cantidad}>Cantidad: {item.cantidad}</Text>
-                                <Text style={styles.subtotal}>
-                                    Subtotal: {(item.precio * item.cantidad).toFixed(2)}€
-                                </Text>
+                    renderItem={({ item }) => {
+                        const precio = parseNumber(item.precio);
+                        const cantidad = parseNumber(item.cantidad);
+                        return (
+                            <View style={styles.itemContainer}>
+                                <Image source={{ uri: item.image }} style={styles.image} />
+                                <View style={styles.details}>
+                                    <Text style={styles.name}>{item.name}</Text>
+                                    <Text style={styles.talla}>Talla: {item.talla}</Text>
+                                    <Text style={styles.price}>Precio: {precio.toFixed(2)}€</Text>
+                                    <Text style={styles.cantidad}>Cantidad: {cantidad}</Text>
+                                </View>
+                                <TouchableOpacity
+                                    style={styles.deleteButton}
+                                    onPress={() => eliminarDelCarrito(item.id, item.talla)}
+                                >
+                                    <Text style={styles.deleteButtonText}>❌</Text>
+                                </TouchableOpacity>
                             </View>
-                        </View>
-                    )}
+                        );
+                    }}
                 />
             )}
 
@@ -48,7 +75,7 @@ const CarritoScreen: React.FC<Props> = ({ navigation }) => {
             <View style={styles.buttonContainer}>
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => alert("Función de pago en desarrollo")}
+                    onPress={() => navigation.navigate("PagoScreen")}
                 >
                     <Text style={styles.buttonText}>Pagar</Text>
                 </TouchableOpacity>
@@ -115,11 +142,13 @@ const styles = StyleSheet.create({
         color: "#333",
         marginTop: 5,
     },
-    subtotal: {
-        fontSize: 14,
-        fontWeight: "600",
-        color: "#000",
-        marginTop: 5,
+    deleteButton: {
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+    },
+    deleteButtonText: {
+        fontSize: 20,
+        color: "red",
     },
     total: {
         fontSize: 20,
