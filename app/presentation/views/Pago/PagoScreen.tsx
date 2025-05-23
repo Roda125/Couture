@@ -13,11 +13,12 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamsList } from '../../../../App';
 import { useNavigation } from '@react-navigation/native';
 
-type NavigationProp = StackNavigationProp<RootStackParamsList, 'PagoScreen'>;
+type NavigationProp = StackNavigationProp<RootStackParamsList, 'InicioScreen'>;
 
 const PagoScreen = () => {
-    const { carrito } = useCarrito();
+    const { carrito, limpiarCarrito } = useCarrito();
     const navigation = useNavigation<NavigationProp>();
+
     const [cardNumber, setCardNumber] = useState('');
     const [expiry, setExpiry] = useState('');
     const [cvc, setCvc] = useState('');
@@ -49,17 +50,15 @@ const PagoScreen = () => {
             if (cardNumber.endsWith('42')) {
                 Alert.alert('Pago fallido', 'Hubo un problema con tu tarjeta');
             } else {
+                limpiarCarrito();
                 Alert.alert('Pago exitoso 🎉', `Se ha cobrado ${total.toFixed(2)}€`);
+                navigation.navigate('InicioScreen');
             }
         }, 2000);
     };
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.homeButton} onPress={() => navigation.navigate('InicioScreen')}>
-                <Text style={styles.homeIcon}>🏠</Text>
-            </TouchableOpacity>
-
             <Text style={styles.title}>Pagar {total.toFixed(2)}€</Text>
 
             <TextInput
@@ -104,16 +103,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#D9D9D9',
         padding: 20,
-        paddingTop: 50,
-    },
-    homeButton: {
-        position: 'absolute',
-        top: 30,
-        left: 20,
-        zIndex: 1,
-    },
-    homeIcon: {
-        fontSize: 28,
+        justifyContent: 'center',
     },
     title: {
         fontSize: 22,

@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
 import {
-    View, Text, TouchableOpacity, Image, TextInput, FlatList,
-    StyleSheet, ImageBackground, ActivityIndicator
+    View,
+    Text,
+    TouchableOpacity,
+    Image,
+    TextInput,
+    FlatList,
+    StyleSheet,
+    ImageBackground,
+    ActivityIndicator,
 } from "react-native";
 import { PropsStackNavigation } from "../../interfaces/StackNav";
 
@@ -12,31 +19,41 @@ export const AccesoriosScreen = ({ navigation }: PropsStackNavigation) => {
 
     useEffect(() => {
         fetch("http://localhost:8080/api/ropa")
-            .then(response => response.json())
-            .then(json => setData(json))
-            .catch(error => alert("Error al obtener datos: " + error))
+            .then((response) => response.json())
+            .then((json) => setData(json))
+            .catch((error) => alert("Error al obtener datos: " + error))
             .finally(() => setLoading(false));
     }, []);
 
     const filteredProducts = data
-        .filter(item => item.categoria?.toLowerCase() === "accesorio") //
-        .filter(item =>
-            item.name.toLowerCase().includes(search.toLowerCase()) ||
-            item.description.toLowerCase().includes(search.toLowerCase())
+        .filter((item) => item.categoria?.toLowerCase() === "accesorio")
+        .filter(
+            (item) =>
+                item.name.toLowerCase().includes(search.toLowerCase()) ||
+                item.description.toLowerCase().includes(search.toLowerCase())
         );
 
     return (
         <View style={styles.container}>
+            {/* Botón para volver al inicio */}
             <TouchableOpacity onPress={() => navigation.navigate("InicioScreen")}>
                 <Text style={styles.logo}>COUTURE</Text>
             </TouchableOpacity>
 
             <Text style={styles.title}>Accesorios</Text>
 
-            <TouchableOpacity style={styles.userButton} onPress={() => navigation.navigate("LoginScreen")}>
-                <Image source={require("../../../../assets/user-icon.svg")} style={styles.userIcon} />
+            {/* Icono de usuario */}
+            <TouchableOpacity
+                style={styles.userButton}
+                onPress={() => navigation.navigate("LoginScreen")}
+            >
+                <Image
+                    source={require("../../../../assets/user-icon.svg")}
+                    style={styles.userIcon}
+                />
             </TouchableOpacity>
 
+            {/* Buscador */}
             <View style={styles.searchContainer}>
                 <TextInput
                     style={styles.searchInput}
@@ -44,9 +61,13 @@ export const AccesoriosScreen = ({ navigation }: PropsStackNavigation) => {
                     value={search}
                     onChangeText={setSearch}
                 />
-                <Image source={require("../../../../assets/search-icon.svg")} style={styles.searchIcon} />
+                <Image
+                    source={require("../../../../assets/search-icon.svg")}
+                    style={styles.searchIcon}
+                />
             </View>
 
+            {/* Productos */}
             {isLoading ? (
                 <ActivityIndicator size="large" color="#000" />
             ) : (
@@ -57,16 +78,32 @@ export const AccesoriosScreen = ({ navigation }: PropsStackNavigation) => {
                     renderItem={({ item }) => (
                         <TouchableOpacity
                             style={styles.productContainer}
-                            onPress={() => navigation.navigate("DetallePrendaScreen", { item })} // 🔽 Enviar datos a la pantalla de detalles
+                            onPress={() =>
+                                navigation.navigate("DetallePrendaScreen", { item })
+                            }
                         >
-                            <ImageBackground source={{ uri: item.image }} style={styles.productImage} />
+                            <ImageBackground
+                                source={{ uri: item.image }}
+                                style={styles.productImage}
+                            />
                             <Text style={styles.productName}>{item.name}</Text>
                             <Text style={styles.productPrice}>{item.precio}€</Text>
                         </TouchableOpacity>
                     )}
+                    contentContainerStyle={{ paddingBottom: 100 }}
                 />
             )}
 
+            {/* Botón de carrito abajo en el centro */}
+            <TouchableOpacity
+                style={styles.cartButton}
+                onPress={() => navigation.navigate("CarritoScreen")}
+            >
+                <Image
+                    source={require("../../../../assets/cart-icon.svg")}
+                    style={styles.cartIcon}
+                />
+            </TouchableOpacity>
         </View>
     );
 };
@@ -144,6 +181,11 @@ const styles = StyleSheet.create({
     cartButton: {
         position: "absolute",
         bottom: 20,
+        alignSelf: "center",
+        backgroundColor: "#fff",
+        padding: 10,
+        borderRadius: 30,
+        elevation: 5,
     },
     cartIcon: {
         width: 30,

@@ -3,12 +3,11 @@ import { View, StyleSheet, Image, TouchableOpacity, Alert } from "react-native";
 import { TextInput, Button, Text } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "@react-navigation/native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { RootStackParamsList } from "../../interfaces/StackNav";
-
 
 function LoginScreen() {
     const navigation = useNavigation<NavigationProp<RootStackParamsList>>();
-
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -53,7 +52,6 @@ function LoginScreen() {
                 return;
             }
 
-
             Alert.alert("Éxito", "Inicio de sesión exitoso.");
             navigation.navigate("InicioScreen");
 
@@ -67,6 +65,14 @@ function LoginScreen() {
 
     return (
         <View style={styles.contenedor}>
+            {/* Botón casita */}
+            <TouchableOpacity
+                style={styles.homeButton}
+                onPress={() => navigation.navigate("InicioScreen")}
+            >
+                <MaterialCommunityIcons name="home" size={28} color="black" />
+            </TouchableOpacity>
+
             <Text style={styles.titulo}>Inicia Sesión</Text>
             <Image source={require("../../../../assets/user-icon.svg")} style={styles.image} />
 
@@ -113,6 +119,12 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: "#B0B0B0",
         padding: 20,
+    },
+    homeButton: {
+        position: "absolute",
+        top: 40,
+        left: 20,
+        zIndex: 10,
     },
     titulo: {
         fontSize: 24,

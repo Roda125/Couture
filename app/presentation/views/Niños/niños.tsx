@@ -67,6 +67,16 @@ export const HombreScreen = ({ navigation }: PropsStackNavigation) => {
                 />
             )}
 
+            <TouchableOpacity
+                style={styles.cartButton}
+                onPress={() => navigation.navigate("CarritoScreen")}
+            >
+                <Image
+                    source={require("../../../../assets/cart-icon.svg")}
+                    style={styles.cartIcon}
+                />
+            </TouchableOpacity>
+
         </View>
     );
 };
@@ -144,6 +154,11 @@ const styles = StyleSheet.create({
     cartButton: {
         position: "absolute",
         bottom: 20,
+        alignSelf: "center",
+        backgroundColor: "#fff",
+        padding: 10,
+        borderRadius: 30,
+        elevation: 5,
     },
     cartIcon: {
         width: 30,

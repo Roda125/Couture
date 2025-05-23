@@ -1,46 +1,56 @@
 import React from "react";
 import { View, Text, TouchableOpacity, ImageBackground, StyleSheet, Image } from "react-native";
 import { PropsStackNavigation } from "../../interfaces/StackNav";
+import { MaterialCommunityIcons } from "@expo/vector-icons"; // ✅ Iconos para el carrito
 
 export const InicioScreen = ({ navigation, route }: PropsStackNavigation) => {
     return (
         <View style={styles.container}>
-            {/* Botón de usuario en la esquina superior derecha */}
+            <TouchableOpacity style={styles.cartButton} onPress={() => navigation.navigate("CarritoScreen")}>
+                <MaterialCommunityIcons name="cart-outline" size={28} color="black" />
+            </TouchableOpacity>
+
             <TouchableOpacity style={styles.userButton} onPress={() => navigation.navigate("LoginScreen")}>
-                <Image source={require("../../../../assets/user-icon.svg")}
-                       style={styles.userIcon} />
+                <Image
+                    source={require("../../../../assets/user-icon.svg")}
+                    style={styles.userIcon}
+                />
             </TouchableOpacity>
 
             <Text style={styles.title}>COUTURE</Text>
 
-            {/* Botón HOMBRE */}
             <TouchableOpacity style={styles.categoryContainer} onPress={() => navigation.navigate("HombreScreen")}>
-                <ImageBackground source={require("../../../../assets/hombre.jpg")}
-                                 style={styles.imageBackground}>
+                <ImageBackground
+                    source={require("../../../../assets/hombre.jpg")}
+                    style={styles.imageBackground}
+                >
                     <Text style={styles.categoryText}>HOMBRE</Text>
                 </ImageBackground>
             </TouchableOpacity>
 
-            {/* Botón MUJER */}
             <TouchableOpacity style={styles.categoryContainer} onPress={() => navigation.navigate("MujerScreen")}>
-                <ImageBackground source={require("../../../../assets/mujer.png")}
-                                 style={styles.imageBackground}>
+                <ImageBackground
+                    source={require("../../../../assets/mujer.png")}
+                    style={styles.imageBackground}
+                >
                     <Text style={styles.categoryText}>MUJER</Text>
                 </ImageBackground>
             </TouchableOpacity>
 
-            {/* Botón NIÑOS */}
             <TouchableOpacity style={styles.categoryContainer} onPress={() => navigation.navigate("NinosScreen")}>
-                <ImageBackground source={require("../../../../assets/niños.jpg")}
-                                 style={styles.imageBackground}>
+                <ImageBackground
+                    source={require("../../../../assets/niños.jpg")}
+                    style={styles.imageBackground}
+                >
                     <Text style={styles.categoryText}>NIÑOS</Text>
                 </ImageBackground>
             </TouchableOpacity>
 
-            {/* Botón ACCESORIOS */}
             <TouchableOpacity style={styles.categoryContainer} onPress={() => navigation.navigate("AccesoriosScreen")}>
-                <ImageBackground source={require("../../../../assets/accesorios.jpg")}
-                                 style={styles.imageBackground}>
+                <ImageBackground
+                    source={require("../../../../assets/accesorios.jpg")}
+                    style={styles.imageBackground}
+                >
                     <Text style={styles.categoryText}>ACCESORIOS</Text>
                 </ImageBackground>
             </TouchableOpacity>
@@ -59,6 +69,13 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: 10,
         right: 10,
+        padding: 10,
+        zIndex: 10,
+    },
+    cartButton: {
+        position: "absolute",
+        top: 10,
+        left: 10,
         padding: 10,
         zIndex: 10,
     },
