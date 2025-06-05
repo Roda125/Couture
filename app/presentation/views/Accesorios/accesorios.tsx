@@ -53,7 +53,7 @@ export const AccesoriosScreen = ({ navigation }: PropsStackNavigation) => {
                 />
             </TouchableOpacity>
 
-            {/* Buscador */}
+
             <View style={styles.searchContainer}>
                 <TextInput
                     style={styles.searchInput}
