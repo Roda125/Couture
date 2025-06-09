@@ -10,7 +10,6 @@ import { TextInput, Button, Text } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "@react-navigation/native";
 import { RootStackParamsList } from "../../interfaces/StackNav";
-import axios from "axios";
 import axiosInstance from "../api/axiosInstance";
 
 const RegistroScreen = () => {

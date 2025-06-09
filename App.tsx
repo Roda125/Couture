@@ -36,8 +36,8 @@ export default function App() {
         <CarritoProvider>
             <NavigationContainer>
                 <Stack.Navigator screenOptions={{ headerShown: false }}>
-                    <Stack.Screen name="InicioScreen" component={InicioScreen} />
                     <Stack.Screen name="LoginScreen" component={LoginScreen} />
+                    <Stack.Screen name="InicioScreen" component={InicioScreen} />
                     <Stack.Screen
                         name="RegistroScreen"
                         component={RegistroScreen}
