@@ -5,8 +5,10 @@ import {
     Alert,
     TouchableOpacity,
     ScrollView,
+    TextInput,
+    Text,
+    Button,
 } from "react-native";
-import { TextInput, Button, Text } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "@react-navigation/native";
 import { RootStackParamsList } from "../../interfaces/StackNav";
@@ -84,49 +86,46 @@ const RegistroScreen = () => {
             <Text style={styles.title}>Registro</Text>
 
             <TextInput
-                label="Nombre"
+                placeholder="Nombre"
                 value={nombre}
                 onChangeText={(text) => setNombre(text)}
-                style={styles.input}
-                error={!!errors.nombre}
+                style={[styles.input, errors.nombre ? styles.inputError : null]}
             />
             {errors.nombre ? <Text style={styles.error}>{errors.nombre}</Text> : null}
 
             <TextInput
-                label="Correo electrónico"
+                placeholder="Correo electrónico"
                 value={email}
                 onChangeText={(text) => setEmail(text)}
                 keyboardType="email-address"
-                style={styles.input}
-                error={!!errors.email}
+                autoCapitalize="none"
+                style={[styles.input, errors.email ? styles.inputError : null]}
             />
             {errors.email ? <Text style={styles.error}>{errors.email}</Text> : null}
 
             <TextInput
-                label="Contraseña"
+                placeholder="Contraseña"
                 value={password}
                 onChangeText={(text) => setPassword(text)}
                 secureTextEntry
-                style={styles.input}
-                error={!!errors.password}
+                style={[styles.input, errors.password ? styles.inputError : null]}
             />
             {errors.password ? <Text style={styles.error}>{errors.password}</Text> : null}
 
             <TextInput
-                label="Confirmar contraseña"
+                placeholder="Confirmar contraseña"
                 value={confirmPassword}
                 onChangeText={(text) => setConfirmPassword(text)}
                 secureTextEntry
-                style={styles.input}
-                error={!!errors.confirmPassword}
+                style={[styles.input, errors.confirmPassword ? styles.inputError : null]}
             />
             {errors.confirmPassword ? (
                 <Text style={styles.error}>{errors.confirmPassword}</Text>
             ) : null}
 
-            <Button mode="contained" onPress={handleRegister} style={styles.button}>
-                Registrarse
-            </Button>
+            <View style={styles.buttonContainer}>
+                <Button title="Registrarse" onPress={handleRegister} color="black" />
+            </View>
 
             <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>
                 <Text style={styles.loginLink}>¿Ya tienes cuenta? Inicia sesión</Text>
@@ -138,10 +137,23 @@ const RegistroScreen = () => {
 const styles = StyleSheet.create({
     container: { padding: 20, flexGrow: 1, justifyContent: "center" },
     title: { fontSize: 24, fontWeight: "bold", marginBottom: 20, textAlign: "center" },
-    input: { marginBottom: 10 },
-    button: { marginTop: 10, backgroundColor: "black" },
-    loginLink: { marginTop: 30, textAlign: "center", color: "black" },
+    input: {
+        borderWidth: 1,
+        borderColor: "#ccc",
+        padding: 10,
+        borderRadius: 5,
+        marginBottom: 10,
+    },
+    inputError: {
+        borderColor: "red",
+    },
     error: { color: "red", fontSize: 12, marginBottom: 5 },
+    buttonContainer: {
+        marginTop: 10,
+        borderRadius: 5,
+        overflow: "hidden",
+    },
+    loginLink: { marginTop: 30, textAlign: "center", color: "black" },
 });
 
 export default RegistroScreen;

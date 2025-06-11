@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     View,
     StyleSheet,
     TouchableOpacity,
     Image,
+    TextInput,
+    Text,
+    Animated,
 } from "react-native";
-import { TextInput, Button, Text, Snackbar } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "@react-navigation/native";
 import { RootStackParamsList } from "../../interfaces/StackNav";
@@ -20,6 +22,7 @@ const LoginScreen = () => {
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
 
+    // Estado para mostrar mensaje estilo Snackbar
     const [snackbarVisible, setSnackbarVisible] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
 
@@ -33,6 +36,14 @@ const LoginScreen = () => {
     const handlePasswordChange = (text: string) => {
         setPassword(text);
         setPasswordError(text ? "" : "Contraseña obligatoria.");
+    };
+
+    const showSnackbar = (message: string) => {
+        setSnackbarMessage(message);
+        setSnackbarVisible(true);
+        setTimeout(() => {
+            setSnackbarVisible(false);
+        }, 3000);
     };
 
     const handleLogin = async () => {
@@ -56,16 +67,14 @@ const LoginScreen = () => {
             const user = response.data;
             await AsyncStorage.setItem("user", JSON.stringify(user));
 
-            setSnackbarMessage("Inicio de sesión exitoso");
-            setSnackbarVisible(true);
+            showSnackbar("Inicio de sesión exitoso");
 
             setTimeout(() => {
                 navigation.navigate("InicioScreen");
             }, 1000);
         } catch (error: any) {
             console.error("Error al iniciar sesión:", error);
-            Alert.alert(
-                "Error",
+            alert(
                 error.response?.status === 401
                     ? "Credenciales incorrectas."
                     : "No se pudo conectar con el servidor."
@@ -74,8 +83,7 @@ const LoginScreen = () => {
     };
 
     const handleGuestAccess = () => {
-        setSnackbarMessage("Accediste como invitado");
-        setSnackbarVisible(true);
+        showSnackbar("Accediste como invitado");
 
         setTimeout(() => {
             navigation.navigate("InicioScreen");
@@ -91,61 +99,53 @@ const LoginScreen = () => {
             />
 
             <TextInput
-                label="Correo electrónico"
+                placeholder="Correo electrónico"
                 value={email}
                 onChangeText={handleEmailChange}
                 keyboardType="email-address"
-                error={!!emailError}
-                style={styles.input}
+                style={[styles.input, emailError ? styles.inputError : null]}
+                autoCapitalize="none"
             />
             {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
 
             <TextInput
-                label="Contraseña"
+                placeholder="Contraseña"
                 value={password}
                 onChangeText={handlePasswordChange}
                 secureTextEntry
-                error={!!passwordError}
-                style={styles.input}
+                style={[styles.input, passwordError ? styles.inputError : null]}
             />
             {passwordError ? (
                 <Text style={styles.errorText}>{passwordError}</Text>
             ) : null}
 
-            <Button
-                mode="contained"
+            <TouchableOpacity
                 onPress={handleLogin}
-                style={styles.button}
+                style={[
+                    styles.button,
+                    !email || !password || emailError || passwordError
+                        ? styles.buttonDisabled
+                        : null,
+                ]}
                 disabled={!email || !password || !!emailError || !!passwordError}
             >
-                Iniciar sesión
-            </Button>
+                <Text style={styles.buttonText}>Iniciar sesión</Text>
+            </TouchableOpacity>
 
-            <Button
-                mode="outlined"
-                onPress={handleGuestAccess}
-                style={styles.guestButton}
-                labelStyle={{ color: "black" }}
-            >
-                Acceder como invitado
-            </Button>
+            <TouchableOpacity onPress={handleGuestAccess} style={styles.guestButton}>
+                <Text style={styles.guestButtonText}>Acceder como invitado</Text>
+            </TouchableOpacity>
 
             <TouchableOpacity onPress={() => navigation.navigate("RegistroScreen")}>
                 <Text style={styles.register}>¿No tienes cuenta? Regístrate</Text>
             </TouchableOpacity>
 
-            <Snackbar
-                visible={snackbarVisible}
-                onDismiss={() => setSnackbarVisible(false)}
-                duration={3000}
-                action={{
-                    label: "OK",
-                    onPress: () => setSnackbarVisible(false),
-                }}
-                style={{ backgroundColor: "black" }}
-            >
-                {snackbarMessage}
-            </Snackbar>
+            {/* Snackbar simple */}
+            {snackbarVisible && (
+                <View style={styles.snackbar}>
+                    <Text style={styles.snackbarText}>{snackbarMessage}</Text>
+                </View>
+            )}
         </View>
     );
 };
@@ -156,6 +156,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         padding: 20,
+        backgroundColor: "#fff",
     },
     title: {
         fontSize: 24,
@@ -169,17 +170,42 @@ const styles = StyleSheet.create({
     },
     input: {
         width: "100%",
-        marginBottom: 10,
+        height: 40,
+        borderColor: "#ccc",
+        borderWidth: 1,
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        marginBottom: 5,
+    },
+    inputError: {
+        borderColor: "red",
     },
     button: {
         marginTop: 10,
         backgroundColor: "black",
         width: "100%",
+        paddingVertical: 10,
+        borderRadius: 5,
+        alignItems: "center",
+    },
+    buttonDisabled: {
+        backgroundColor: "#666",
+    },
+    buttonText: {
+        color: "white",
+        fontWeight: "bold",
     },
     guestButton: {
         marginTop: 10,
         borderColor: "black",
         width: "100%",
+        paddingVertical: 10,
+        borderWidth: 1,
+        borderRadius: 5,
+        alignItems: "center",
+    },
+    guestButtonText: {
+        color: "black",
     },
     register: {
         marginTop: 30,
@@ -189,6 +215,20 @@ const styles = StyleSheet.create({
         color: "red",
         fontSize: 12,
         alignSelf: "flex-start",
+    },
+    snackbar: {
+        position: "absolute",
+        bottom: 30,
+        left: 20,
+        right: 20,
+        backgroundColor: "black",
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        borderRadius: 5,
+        alignItems: "center",
+    },
+    snackbarText: {
+        color: "white",
     },
 });
 

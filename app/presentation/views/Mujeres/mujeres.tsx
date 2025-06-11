@@ -19,8 +19,9 @@ export const MujerScreen = ({ navigation }: PropsStackNavigation) => {
     }, []);
 
     const filteredProducts = data
-        .filter(item => item.categoria?.toLowerCase() === "mujer") // Filtra por categoría "Mujer"
-        .filter(item => item.name.toLowerCase().includes(search.toLowerCase()) ||
+        .filter(item => item.categoria?.toLowerCase() === "mujer")
+        .filter(item =>
+            item.name.toLowerCase().includes(search.toLowerCase()) ||
             item.description.toLowerCase().includes(search.toLowerCase())
         );
 
@@ -32,8 +33,17 @@ export const MujerScreen = ({ navigation }: PropsStackNavigation) => {
 
             <Text style={styles.title}>MUJER</Text>
 
-            <TouchableOpacity style={styles.userButton} onPress={() => navigation.navigate("LoginScreen")}>
-                <Image source={require("../../../../assets/user-icon.svg")} style={styles.userIcon} />
+            {/* Botón Cerrar Sesión */}
+            <TouchableOpacity
+                style={styles.userButton}
+                onPress={() => navigation.navigate("LoginScreen")}
+                activeOpacity={0.7}
+            >
+                <Image
+                    source={require("../../../../assets/user-icon.svg")}
+                    style={styles.userIcon}
+                />
+                <Text style={styles.userButtonText}>Cerrar Sesión</Text>
             </TouchableOpacity>
 
             <View style={styles.searchContainer}>
@@ -42,6 +52,7 @@ export const MujerScreen = ({ navigation }: PropsStackNavigation) => {
                     placeholder="Buscar"
                     value={search}
                     onChangeText={setSearch}
+                    placeholderTextColor="#666"
                 />
                 <Image source={require("../../../../assets/search-icon.svg")} style={styles.searchIcon} />
             </View>
@@ -56,19 +67,25 @@ export const MujerScreen = ({ navigation }: PropsStackNavigation) => {
                     renderItem={({ item }) => (
                         <TouchableOpacity
                             style={styles.productContainer}
-                            onPress={() => navigation.navigate("DetallePrendaScreen", { item })} // 🔽 Enviar datos a la pantalla de detalles
+                            onPress={() => navigation.navigate("DetallePrendaScreen", { item })}
                         >
-                            <ImageBackground source={{ uri: item.image }} style={styles.productImage} />
+                            <ImageBackground
+                                source={{ uri: item.image }}
+                                style={styles.productImage}
+                                imageStyle={{ borderRadius: 10 }}
+                            />
                             <Text style={styles.productName}>{item.name}</Text>
                             <Text style={styles.productPrice}>{item.precio}€</Text>
                         </TouchableOpacity>
                     )}
+                    contentContainerStyle={{ paddingBottom: 100 }}
                 />
             )}
 
             <TouchableOpacity
                 style={styles.cartButton}
                 onPress={() => navigation.navigate("CarritoScreen")}
+                activeOpacity={0.7}
             >
                 <Image
                     source={require("../../../../assets/cart-icon.svg")}
@@ -98,17 +115,36 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: "bold",
         marginBottom: 10,
+        color: "#222",
     },
     userButton: {
         position: "absolute",
         top: 10,
         right: 20,
-        padding: 10,
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#222",
+        paddingVertical: 8,
+        paddingHorizontal: 14,
+        borderRadius: 25,
+        elevation: 6,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+        zIndex: 10,
     },
     userIcon: {
-        width: 30,
-        height: 30,
-        tintColor: "black",
+        width: 24,
+        height: 24,
+        tintColor: "white",
+        marginRight: 8,
+    },
+    userButtonText: {
+        color: "white",
+        fontWeight: "600",
+        fontSize: 16,
+        letterSpacing: 0.4,
     },
     searchContainer: {
         flexDirection: "row",
@@ -122,6 +158,7 @@ const styles = StyleSheet.create({
     searchInput: {
         flex: 1,
         height: 40,
+        color: "#000",
     },
     searchIcon: {
         width: 20,
@@ -135,6 +172,11 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         padding: 10,
         borderRadius: 10,
+        elevation: 3,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 3,
     },
     productImage: {
         width: 150,
@@ -145,10 +187,12 @@ const styles = StyleSheet.create({
     productName: {
         fontWeight: "bold",
         fontSize: 14,
+        color: "#222",
     },
     productPrice: {
         fontSize: 14,
         fontWeight: "bold",
+        color: "#222",
     },
     cartButton: {
         position: "absolute",
@@ -158,6 +202,10 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 30,
         elevation: 5,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
     },
     cartIcon: {
         width: 30,
